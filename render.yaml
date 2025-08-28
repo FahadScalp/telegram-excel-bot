@@ -1,0 +1,17 @@
+services:
+  - type: worker
+    name: telegram-excel-bot
+    env: python
+    plan: starter
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: python excel_bot.py
+    autoDeploy: true
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: A_MULT
+        value: "0.323"
+      - key: B_MULT
+        value: "0.786"
+      - key: DECIMALS
+        value: "9"
