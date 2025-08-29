@@ -39,7 +39,6 @@ def parse_high_low_and_order(text: str):
       - places: أكبر عدد منازل عشرية ظهر في الأرقام المدخلة (بدون فرض حد أدنى)
     """
     t_lower = text.lower().replace("قمه", "قمة")
-    # استخدم النص الأصلي لاستخراج الأرقام للحفاظ على الدقة (.,)
     # تحديد ترتيب الكلمات (قاع/قمة) من النص الصغير
     low_pos  = re.search(r'(قاع|low)\b', t_lower)
     high_pos = re.search(r'(قمة|high|هاي|top|peak|h)\b', t_lower)
@@ -121,8 +120,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "أرسل قمة/قاع بأي ترتيب:\n"
         "- قمة ثم قاع ⇒ SELL\n"
         "- قاع ثم قمة ⇒ BUY\n"
-        "سأرجع سطرًا واحدًا فقط: Limit | TP | SL\n"
-        "يمكنك أيضًا كتابة وقف الخسارة مثل: «وقف 113252»."
+        "سأرجع سطرًا متعدد الأسطر: Limit ثم TP ثم SL.\n"
+        "يمكنك كتابة وقف: «وقف 113252»."
     )
 
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -155,7 +154,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     sl_places = sl_decimals if sl_decimals is not None else places
     d_sl    = dround(sl, sl_places)
 
-    reply = f"✅ {mode.upper()} → {title}={d_entry} | TP={d_tp} | SL={d_sl}"
+    # ----- هنا تعديل تنسيق الرد إلى أسطر متعددة -----
+    reply = (
+        f"✅ {mode.upper()} →\n"
+        f"{title}={d_entry}\n"
+        f"| TP={d_tp}\n"
+        f"| SL={d_sl}"
+    )
     await update.message.reply_text(reply)
 
 def main():
